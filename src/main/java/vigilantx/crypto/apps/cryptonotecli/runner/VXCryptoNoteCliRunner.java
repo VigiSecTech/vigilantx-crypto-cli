@@ -77,10 +77,11 @@ import io.netty.buffer.Unpooled;
  *
  * <ul>
  * <li><strong>keyGen</strong> - Генерация ключа и сертификата</li>
- * <li><strong>decrypt</strong> - Дешифрование данных</li>
- * <li><strong>encrypt</strong> - Шифрование данных</li>
+ * <li><strong>keyList</strong> - Вывод содержимого хранилища</li>
  * <li><strong>keyExport</strong> - Экспорт ключа в файл</li>
  * <li><strong>keyImport</strong> - Импорт ключа из файла</li>
+ * <li><strong>decrypt</strong> - Дешифрование данных</li>
+ * <li><strong>encrypt</strong> - Шифрование данных</li>
  * </ul>
  *
  * <p>
@@ -535,7 +536,7 @@ public final class VXCryptoNoteCliRunner {
 	}
 
 	enum Operations {
-		keyGen, keyImport, keyExport, encrypt, decrypt
+		keyGen, keyList, keyImport, keyExport, encrypt, decrypt
 	}
 
 	/**
@@ -1264,6 +1265,78 @@ public final class VXCryptoNoteCliRunner {
 	}
 
 	/**
+	 * Выводит список приватных ключей и цепочек сертификатов из указанного
+	 * хранилища ключей (Keystore).
+	 *
+	 * <p>
+	 * Метод ожидает один аргумент - путь к файлу хранилища ключей. Запрашивает у
+	 * пользователя пароль для доступа к хранилищу через консольный ввод (скрытый).
+	 * </p>
+	 *
+	 * <p>
+	 * Выводит в консоль два списка:
+	 * <ul>
+	 * <li>Список приватных ключей и их алиасов.</li>
+	 * <li>Список только цепочек сертификатов и их алиасов.</li>
+	 * </ul>
+	 *
+	 *
+	 * @param args массив аргументов командной строки, где args[0] - путь к файлу
+	 *             хранилища ключей
+	 * @throws IllegalArgumentException  если передано неверное количество
+	 *                                   аргументов
+	 * @throws KeyStoreException         если возникла ошибка при работе с
+	 *                                   хранилищем ключей
+	 * @throws NoSuchAlgorithmException  если указанный алгоритм не поддерживается
+	 * @throws CertificateException      если возникает ошибка обработки сертификата
+	 * @throws IOException               если возникает ошибка ввода-вывода при
+	 *                                   загрузке хранилища ключей
+	 * @throws UnrecoverableKeyException если ключи в хранилище не могут быть
+	 *                                   восстановлены
+	 */
+	public static void keyList(final String[] args) throws KeyStoreException, NoSuchAlgorithmException,
+			CertificateException, IOException, UnrecoverableKeyException {
+		if (args.length != 2) {
+			throw new IllegalArgumentException("Ожидается 1 аргумент: <keystore_path>");
+		}
+		final var keystorePath = Path.of(args[0]);
+		final var console = System.console();
+		final var password = console.readPassword("password(hide):");
+		final var keystore = new VXKeystore(keystorePath, password);
+
+		{
+			final var aliases = keystore.keyStore.aliases();
+			if (aliases.hasMoreElements()) {
+				System.out.println("Приватные ключи и цепочки сертификатов:");
+				while (aliases.hasMoreElements()) {
+					final var alias = aliases.nextElement();
+					if (keystore.keyStore.isKeyEntry(alias)) {
+						final var certificates = keystore.keyStore.getCertificateChain(alias);
+						if (certificates.length != 1) {
+							throw new IllegalStateException();
+						}
+						System.out.println("Алиас: " + alias + " " + certificates[0]);
+					}
+				}
+			}
+		}
+		{
+			System.out.println();
+			System.out.println("Только цепочки сертификатов:");
+			final var aliases = keystore.keyStore.aliases();
+			if (aliases.hasMoreElements()) {
+				while (aliases.hasMoreElements()) {
+					final var alias = aliases.nextElement();
+					if (keystore.keyStore.isCertificateEntry(alias)) {
+						final var certificate = keystore.keyStore.getCertificate(alias);
+						System.out.println("Алиас: " + alias + " " + certificate);
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * Основной метод для выполнения операций с хранилищем ключей и
 	 * криптографическими данными.
 	 *
@@ -1280,6 +1353,7 @@ public final class VXCryptoNoteCliRunner {
 	 *
 	 * <ul>
 	 * <li><strong>keyGen</strong> - Генерация ключа и сертификата</li>
+	 * <li><strong>keyList</strong> - Вывод содержимого хранилища</li>
 	 * <li><strong>keyExport</strong> - Экспорт ключа в файл</li>
 	 * <li><strong>keyImport</strong> - Импорт ключа из файла</li>
 	 * <li><strong>decrypt</strong> - Дешифрование данных</li>
@@ -1369,17 +1443,20 @@ public final class VXCryptoNoteCliRunner {
 		case keyGen -> {
 			VXCryptoNoteCliRunner.keyGenerate(args);
 		}
-		case decrypt -> {
-			VXCryptoNoteCliRunner.decrypt(args);
-		}
-		case encrypt -> {
-			VXCryptoNoteCliRunner.encrypt(args);
+		case keyList -> {
+			VXCryptoNoteCliRunner.keyList(args);
 		}
 		case keyExport -> {
 			VXCryptoNoteCliRunner.keyExport(args);
 		}
 		case keyImport -> {
 			VXCryptoNoteCliRunner.keyImport(args);
+		}
+		case decrypt -> {
+			VXCryptoNoteCliRunner.decrypt(args);
+		}
+		case encrypt -> {
+			VXCryptoNoteCliRunner.encrypt(args);
 		}
 		default -> throw new IllegalArgumentException("Unexpected value: " + operation);
 		}
