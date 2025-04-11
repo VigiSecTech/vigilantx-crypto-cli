@@ -1,0 +1,167 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>vigilantx</groupId>
+	<artifactId>vigilantx-crypto-cli</artifactId>
+	<version>1.0</version>
+	<properties>
+		<!-- Версия Java для исходного кода и компилятора -->
+		<maven.compiler.source>23</maven.compiler.source>
+		<maven.compiler.target>23</maven.compiler.target>
+		<!-- Кодировка проекта -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+	<name>VigilantX Crypto CLI</name>
+	<description>
+		Этот проект представляет собой криптографическое CLI-приложение,
+		предназначенное для работы с хранилищем ключей и криптографическими
+		данными. Он предоставляет инструменты для генерации ключей и
+		сертификатов, а также для шифрования и дешифрования данных. Приложение
+		использует Bouncy Castle для криптографических операций и Netty для
+		работы с сетью. Это решение предназначено для безопасной работы с
+		криптографическими данными в приложениях.
+	</description>
+	<organization>
+		<name>VigiSecTech</name>
+		<url>https://github.com/VigiSecTech</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>xCEVre</id>
+			<name>xCEVre</name>
+			<url>https://github.com/xCEVre</url>
+		</developer>
+	</developers>
+	<scm>
+		<url>https://github.com/VigiSecTech/vigilantx-crypto-cli</url>
+		<connection>
+			scm:git:https://github.com/VigiSecTech/vigilantx-crypto-cli.git</connection>
+		<developerConnection>
+			scm:git:git@github.com:VigiSecTech/vigilantx-crypto-cli.git</developerConnection>
+	</scm>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/VigiSecTech/vigilantx-crypto-cli/issues</url>
+	</issueManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>1.80</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk18on</artifactId>
+			<version>1.80</version>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-buffer</artifactId>
+			<version>4.2.0.Final</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.5.0</version>
+				<executions>
+					<execution>
+						<id>enforce-maven</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>3.6.3</version>
+								</requireMavenVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.11.2</version>
+				<executions>
+					<!-- Агрегация документации и создание JAR -->
+					<execution>
+						<id>aggregate-javadocs</id>
+						<!-- Выполняется при mvn install -->
+						<phase>package</phase>
+						<goals>
+							<!-- Генерирует HTML-документацию -->
+							<goal>aggregate</goal>
+							<!-- Создаёт JAR с документацией -->
+							<goal>aggregate-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!-- запускается mvn versions:display-dependency-updates
+				versions:display-plugin-updates -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.18.0</version>
+				<configuration>
+					<ruleSet>
+						<rules>
+							<rule>
+								<groupId>io.netty</groupId>
+								<artifactId>netty-buffer</artifactId>
+								<ignoreVersions>
+									<ignoreVersion>
+										<type>regex</type>
+										<version>5.0.0.Alpha[0-9]+</version>
+									</ignoreVersion>
+								</ignoreVersions>
+							</rule>
+							<rule>
+								<groupId>org.apache.maven.plugins</groupId>
+								<artifactId>maven-compiler-plugin</artifactId>
+								<ignoreVersions>
+									<ignoreVersion>
+										<type>regex</type>
+										<version>4.0.0-beta-[0-9]+</version>
+									</ignoreVersion>
+								</ignoreVersions>
+							</rule>
+						</rules>
+					</ruleSet>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.7.1</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>
+								vigilantx.crypto.apps.cryptonotecli.runner.VXCryptoNoteCliRunner</mainClass>
+						</manifest>
+					</archive>
+					<!-- Указываем, что нужно создать JAR с зависимостями -->
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
