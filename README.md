@@ -33,22 +33,22 @@ VXCryptoNote CLI – это консольное приложение для р�
 
 1. Клонируйте репозиторий:
 ```bash
-      git clone https://github.com/VigiSecTech/vigilantx-crypto-cli
+git clone https://github.com/VigiSecTech/vigilantx-crypto-cli
 ```
 2. Перейдите в директорию проекта:
 ```bash
-      cd vigilantx-crypto-cli
+cd vigilantx-crypto-cli
 ```
 3. Соберите проект с помощью Maven:
 ```bash
-      mvn clean package
+mvn clean package
 ```
 После успешной сборки будет создан JAR-файл, который может быть запущен через командную строку.
 
 ### Использование
 Пример базового вызова приложения:
 ```bash
-      java -jar target/vigilantx-crypto-cli-1.0-jar-with-dependencies.jar keystore_path operation arguments
+java -jar target/vigilantx-crypto-cli-1.0-jar-with-dependencies.jar keystore_path operation arguments
 ```
 Где:
 
@@ -81,26 +81,26 @@ VXCryptoNote CLI – это консольное приложение для р�
 
 #### Генерация ключа
 ```bash
-      java -jar VXCryptoNoteCliRunner.jar keystore keyGen user1
+java -jar VXCryptoNoteCliRunner.jar keystore keyGen user1
 ```
 - user1: алиас вашего ключа для генерации
 
 #### Экспорт ключа
 ```bash
-      java -jar VXCryptoNoteCliRunner.jar keystore keyExport user1 user1.x509.crt
+java -jar VXCryptoNoteCliRunner.jar keystore keyExport user1 user1.x509.crt
 ```
 - user1: алиас вашего ключа для экспорта
 - our.x509.crt: путь для сохранения ключа(сертификата)
 #### Импорт ключа
 ```bash
-      java -jar VXCryptoNoteCliRunner.jar keystore keyImport user2 forImport.x509.crt
+java -jar VXCryptoNoteCliRunner.jar keystore keyImport user2 forImport.x509.crt
 ```
 - user2: алиас под которым сохранить ключ в хранилище
 - forImport.x509.crt: путь для сохранения ключа(сертификата)
 
 #### Шифрование данных
 ```bash
-      java -jar VXCryptoNoteCliRunner.jar keystore encrypt user1 user2 source_file encrypted_file
+java -jar VXCryptoNoteCliRunner.jar keystore encrypt user1 user2 source_file encrypted_file
 ```
 - user1: алиас вашего ключа
 - user2: алиас ключа для которого нужно шифровать
@@ -109,7 +109,7 @@ VXCryptoNote CLI – это консольное приложение для р�
 
 #### Дешифрование данных
 ```bash
-      java -jar VXCryptoNoteCliRunner.jar keystore decrypt user1 encrypted_file decrypted_file
+java -jar VXCryptoNoteCliRunner.jar keystore decrypt user1 encrypted_file decrypted_file
 ```
 - user1: алиас вашего ключа
 - encrypted_file: файл, который нужно дешифровать
