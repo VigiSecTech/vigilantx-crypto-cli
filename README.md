@@ -90,13 +90,13 @@ java -jar VXCryptoNoteCliRunner.jar keystore keyGen user1
 java -jar VXCryptoNoteCliRunner.jar keystore keyExport user1 user1.x509.crt
 ```
 - user1: алиас вашего ключа для экспорта
-- our.x509.crt: путь для сохранения ключа(сертификата)
+- user1.x509.crt: путь для сохранения ключа(сертификата)
 #### Импорт ключа
 ```bash
-java -jar VXCryptoNoteCliRunner.jar keystore keyImport user2 forImport.x509.crt
+java -jar VXCryptoNoteCliRunner.jar keystore keyImport user2 user2.x509.crt
 ```
 - user2: алиас под которым сохранить ключ в хранилище
-- forImport.x509.crt: путь для сохранения ключа(сертификата)
+- user2.x509.crt: путь для чтения ключа(сертификата)
 
 #### Шифрование данных
 ```bash
